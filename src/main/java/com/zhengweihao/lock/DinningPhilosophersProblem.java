@@ -32,6 +32,12 @@ public class DinningPhilosophersProblem {
 	}
 }
 
+/**
+ * ¿ê×Ó
+ * 
+ * @author zhengweihao
+ *
+ */
 class Chopstick {
 
 	private int id;
@@ -45,6 +51,12 @@ class Chopstick {
 	}
 }
 
+/**
+ * ÕÜÑ§¼Ò
+ * 
+ * @author zhengweihao
+ *
+ */
 class Philosopher extends Thread {
 
 	private String name;
