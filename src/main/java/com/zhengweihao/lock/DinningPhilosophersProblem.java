@@ -80,9 +80,10 @@ class Philosopher extends Thread {
 				Thread.sleep(r.nextInt(scope));
 
 				/*
-				 * synchronized (left) { System.out.println("the philosopher:" +
-				 * this.name + " get the left schopstick .."); synchronized
-				 * (right) { System.out.println("the philosopher:" + this.name +
+				 * // ËÀËø°¸Àý synchronized (left) {
+				 * System.out.println("the philosopher:" + this.name +
+				 * " get the left schopstick .."); synchronized (right) {
+				 * System.out.println("the philosopher:" + this.name +
 				 * " get the right schopstick ..");
 				 * System.out.println("the philosopher:" + this.name +
 				 * " is in dining .."); Thread.sleep(r.nextInt(scope)); } }
