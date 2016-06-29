@@ -71,7 +71,7 @@ class Philosopher extends Thread {
 
 	@Override
 	public void run() {
-		int scope = 2;
+		int scope = 5;
 		Random r = new Random();
 
 		try {
