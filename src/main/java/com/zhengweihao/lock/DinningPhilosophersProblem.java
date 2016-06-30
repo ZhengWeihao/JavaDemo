@@ -82,9 +82,9 @@ class Philosopher extends Thread {
 				/*
 				 * // 死锁案例 synchronized (left) {
 				 * System.out.println("the philosopher:" + this.name +
-				 * " get the left schopstick .."); synchronized (right) {
+				 * " get the left chopstick .."); synchronized (right) {
 				 * System.out.println("the philosopher:" + this.name +
-				 * " get the right schopstick ..");
+				 * " get the right chopstick ..");
 				 * System.out.println("the philosopher:" + this.name +
 				 * " is in dining .."); Thread.sleep(r.nextInt(scope)); } }
 				 */
@@ -101,17 +101,17 @@ class Philosopher extends Thread {
 				}
 
 				synchronized (firstChopstick) {
-					System.out.println("the philosopher:" + this.name + " get the first schopstick("
+					System.out.println("the philosopher:" + this.name + " get the first chopstick("
 							+ firstChopstick.getId() + ") ..");
 					synchronized (secondChopstick) {
-						System.out.println("the philosopher:" + this.name + " get the second schopstick("
+						System.out.println("the philosopher:" + this.name + " get the second chopstick("
 								+ secondChopstick.getId() + ") ..");
 						System.out.println("the philosopher:" + this.name + " is in dining ..");
 						Thread.sleep(r.nextInt(scope));
 					}
 				}
 
-				System.out.println("the philosopher:" + this.name + " put down the schopsticks ..");
+				System.out.println("the philosopher:" + this.name + " put down the chopsticks ..");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
