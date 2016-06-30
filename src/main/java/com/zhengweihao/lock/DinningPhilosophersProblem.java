@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * ÕÜÑ§¼Ò½ø²ÍÎÊÌâ
+ * å“²å­¦å®¶è¿›é¤é—®é¢˜
  * 
  * @author zhengweihao
  *
@@ -13,13 +13,13 @@ import java.util.Random;
 public class DinningPhilosophersProblem {
 
 	public static void main(String[] args) {
-		// ÊµÀı»¯ÎåË«¿ê×Ó
+		// å®ä¾‹åŒ–äº”åŒç­·å­
 		List<Chopstick> chopsticks = new ArrayList<Chopstick>();
 		for (int i = 0; i < 5; i++) {
 			chopsticks.add(new Chopstick(i));
 		}
 
-		// ÎªÕÜÑ§¼Ò·ÖÅä¿ê×Ó²¢ÔËĞĞ
+		// ä¸ºå“²å­¦å®¶åˆ†é…ç­·å­å¹¶è¿è¡Œ
 		for (int i = 0; i < 5; i++) {
 			int leftI = i;
 			int rightI = i + 1;
@@ -33,7 +33,7 @@ public class DinningPhilosophersProblem {
 }
 
 /**
- * ¿ê×Ó
+ * ç­·å­
  * 
  * @author zhengweihao
  *
@@ -52,7 +52,7 @@ class Chopstick {
 }
 
 /**
- * ÕÜÑ§¼Ò
+ * å“²å­¦å®¶
  * 
  * @author zhengweihao
  *
@@ -80,7 +80,7 @@ class Philosopher extends Thread {
 				Thread.sleep(r.nextInt(scope));
 
 				/*
-				 * // ËÀËø°¸Àı synchronized (left) {
+				 * // æ­»é”æ¡ˆä¾‹ synchronized (left) {
 				 * System.out.println("the philosopher:" + this.name +
 				 * " get the left schopstick .."); synchronized (right) {
 				 * System.out.println("the philosopher:" + this.name +
@@ -89,7 +89,7 @@ class Philosopher extends Thread {
 				 * " is in dining .."); Thread.sleep(r.nextInt(scope)); } }
 				 */
 
-				// °´¿ê×Ó±àºÅÉıĞòË³ĞòÈ¡¿ê×Ó
+				// æŒ‰ç­·å­ç¼–å·å‡åºé¡ºåºå–ç­·å­
 				Chopstick firstChopstick = null;
 				Chopstick secondChopstick = null;
 				if (left.getId() > right.getId()) {
