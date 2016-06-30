@@ -19,7 +19,7 @@ public class DinningPhilosophersProblem {
 			chopsticks.add(new Chopstick(i));
 		}
 
-		// 为哲学家分配筷子并运行
+        // 为哲学家分配筷子并运行
 		for (int i = 0; i < 5; i++) {
 			int leftI = i;
 			int rightI = i + 1;
