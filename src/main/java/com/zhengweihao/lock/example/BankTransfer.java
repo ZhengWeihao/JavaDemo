@@ -1,4 +1,4 @@
-package com.zhengweihao.lock.example.banktransfer;
+package com.zhengweihao.lock.example;
 
 import org.junit.Test;
 
