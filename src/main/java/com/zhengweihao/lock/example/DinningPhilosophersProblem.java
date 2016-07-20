@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 哲学家进餐问题
@@ -37,6 +39,8 @@ public class DinningPhilosophersProblem {
 
     @Test
     public void orderedDining() {
+        System.out.println("全局顺序方式");
+
         // 实例化五双筷子
         List<Chopstick> chopsticks = new ArrayList<Chopstick>();
         for (int i = 0; i < 5; i++) {
@@ -55,6 +59,72 @@ public class DinningPhilosophersProblem {
         }
 
         while (true) ;
+    }
+
+    @Test
+    public void tryLockDining() {
+        System.out.println("tryLock方式:");
+
+        // 实例化五双筷子
+        List<ReentrantLock> chopsticks = new ArrayList<ReentrantLock>();
+        for (int i = 0; i < 5; i++) {
+            chopsticks.add(new ReentrantLock());
+        }
+
+        // 为哲学家分配筷子并运行
+        for (int i = 0; i < 5; i++) {
+            int leftI = i;
+            int rightI = i + 1;
+            if (rightI >= 5) {
+                rightI = 0;
+            }
+
+            new TryLockPhilosopher(String.valueOf(i), chopsticks.get(leftI), chopsticks.get(rightI)).start();
+        }
+
+        while (true) ;
+    }
+
+    @Test
+    public void lockInterruptDining() throws InterruptedException {
+        System.out.println("lockInterrupt方式:");
+
+        // 实例化五双筷子
+        List<ReentrantLock> chopsticks = new ArrayList<ReentrantLock>();
+        for (int i = 0; i < 5; i++) {
+            chopsticks.add(new ReentrantLock());
+        }
+
+        // 为哲学家分配筷子并运行
+        List<InterruptPhilosopher> ips = new ArrayList<InterruptPhilosopher>();
+        for (int i = 0; i < 5; i++) {
+            int leftI = i;
+            int rightI = i + 1;
+            if (rightI >= 5) {
+                rightI = 0;
+            }
+
+            InterruptPhilosopher ip = new InterruptPhilosopher(String.valueOf(i), chopsticks.get(leftI), chopsticks.get(rightI));
+            ips.add(ip);
+            ip.start();
+        }
+
+        while (true) {
+            boolean shutdown = false;
+            for(InterruptPhilosopher ip : ips) {
+                if(!ip.isInDining() && ip.getLeft().isLocked() && ip.getRight().isLocked()) {
+                    shutdown = true;
+                }
+            }
+
+            if(shutdown) {
+                for(InterruptPhilosopher ip :ips) {
+                    ip.interrupt();
+                }
+            }
+
+            Thread.sleep(1000);
+        }
     }
 }
 
@@ -171,5 +241,108 @@ class OrderedPhilosopher extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+}
+
+class TryLockPhilosopher extends Thread {
+    private String name;
+    private ReentrantLock left;
+    private ReentrantLock right;
+
+    public TryLockPhilosopher(String name, ReentrantLock left, ReentrantLock right) {
+        this.name = name;
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    public void run() {
+        int scope = 2;
+        Random r = new Random();
+
+        try {
+            while (true) {
+                int tryTime = 10;
+                System.out.println("哲学家:" + this.name + " 正在思考 ..");
+                Thread.sleep(r.nextInt(scope));
+
+                if (left.tryLock(tryTime, TimeUnit.SECONDS)) {
+                    System.out.println("哲学家:" + this.name + " 拿起左边筷子 ..");
+                    if (right.tryLock(tryTime, TimeUnit.SECONDS)) {
+                        System.out.println("哲学家:" + this.name + " 拿起右边筷子 ..");
+                        try {
+                            System.out.println("哲学家:" + this.name + " 开始用餐 ..");
+                            Thread.sleep(r.nextInt(scope));
+                        } finally {
+                            left.unlock();
+                            right.unlock();
+                            System.out.println("哲学家:" + this.name + " 放下筷子 ..");
+                        }
+                    } else {
+                        System.out.println("哲学家:" + this.name + " 无法拿起右边筷子, 继续思考 ..");
+                    }
+                } else {
+                    System.out.println("哲学家:" + this.name + " 无法拿起左边筷子, 继续思考 ..");
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class InterruptPhilosopher extends Thread {
+    private String name;
+    private ReentrantLock left;
+    private ReentrantLock right;
+    private boolean inDining = false;
+
+    public InterruptPhilosopher(String name, ReentrantLock left, ReentrantLock right) {
+        this.name = name;
+        this.left = left;
+        this.right = right;
+    }
+
+    @Override
+    public void run() {
+        int scope = 2;
+        Random r = new Random();
+
+        try {
+            while (true) {
+                try {
+                    inDining = false;
+                    System.out.println("哲学家:" + this.name + " 正在思考 ..");
+                    Thread.sleep(r.nextInt(scope));
+
+                    left.lockInterruptibly();
+                    System.out.println("哲学家:" + this.name + " 拿起左边筷子 ..");
+                    right.lockInterruptibly();
+                    System.out.println("哲学家:" + this.name + " 拿起右边筷子 ..");
+                    inDining = true;
+                    System.out.println("哲学家:" + this.name + " 开始用餐 ..");
+                    Thread.sleep(r.nextInt(scope));
+                } finally {
+                    left.unlock();
+                    right.unlock();
+                    System.out.println("哲学家:" + this.name + " 放下筷子 ..");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ReentrantLock getLeft() {
+        return this.left;
+    }
+
+    public ReentrantLock getRight() {
+        return this.right;
+    }
+
+    public boolean isInDining() {
+        return this.inDining;
     }
 }
