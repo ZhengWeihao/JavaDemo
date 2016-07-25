@@ -3,6 +3,7 @@ package com.zhengweihao.lock.example;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -109,21 +110,15 @@ public class DinningPhilosophersProblem {
             ip.start();
         }
 
-        while (true) {
-            boolean shutdown = false;
-            for(InterruptPhilosopher ip : ips) {
-                if(!ip.isInDining() && ip.getLeft().isLocked() && ip.getRight().isLocked()) {
-                    shutdown = true;
-                }
-            }
-
-            if(shutdown) {
-                for(InterruptPhilosopher ip :ips) {
+        boolean interrupted = false;
+        while (!interrupted) {
+            Date lastDiningDate = ips.get(0).getLastDiningDate();
+            if(lastDiningDate != null && new Date().getTime() - lastDiningDate.getTime() > 5000) {
+                for(InterruptPhilosopher ip : ips) {
                     ip.interrupt();
                 }
+                interrupted = true;
             }
-
-            Thread.sleep(1000);
         }
     }
 }
@@ -296,7 +291,7 @@ class InterruptPhilosopher extends Thread {
     private String name;
     private ReentrantLock left;
     private ReentrantLock right;
-    private boolean inDining = false;
+    private Date lastDiningDate;
 
     public InterruptPhilosopher(String name, ReentrantLock left, ReentrantLock right) {
         this.name = name;
@@ -312,7 +307,6 @@ class InterruptPhilosopher extends Thread {
         try {
             while (true) {
                 try {
-                    inDining = false;
                     System.out.println("哲学家:" + this.name + " 正在思考 ..");
                     Thread.sleep(r.nextInt(scope));
 
@@ -320,9 +314,12 @@ class InterruptPhilosopher extends Thread {
                     System.out.println("哲学家:" + this.name + " 拿起左边筷子 ..");
                     right.lockInterruptibly();
                     System.out.println("哲学家:" + this.name + " 拿起右边筷子 ..");
-                    inDining = true;
+                    lastDiningDate = new Date();
                     System.out.println("哲学家:" + this.name + " 开始用餐 ..");
                     Thread.sleep(r.nextInt(scope));
+                } catch(InterruptedException e) {
+                    System.out.println("interrupted");
+                    e.printStackTrace();
                 } finally {
                     left.unlock();
                     right.unlock();
@@ -342,7 +339,7 @@ class InterruptPhilosopher extends Thread {
         return this.right;
     }
 
-    public boolean isInDining() {
-        return this.inDining;
+    public Date getLastDiningDate() {
+        return this.lastDiningDate;
     }
 }
