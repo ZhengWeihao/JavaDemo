@@ -21,7 +21,7 @@ public class BankTransfer {
     private static final CountDownLatch latch = new CountDownLatch(transferTime);
     private static final boolean debug = false;
 
-    Runnable unlockTransfer = new Runnable() {
+    Runnable transfer = new Runnable() {
         @Override
         public void run() {
             Random r = new Random();
@@ -40,11 +40,11 @@ public class BankTransfer {
     };
 
     @Test
-    public void unlockTransfer() throws InterruptedException {
+    public void transfer() throws InterruptedException {
         long startMillis = System.currentTimeMillis();
 
         for (int i = 0; i < transferTime; i++) {
-            executor.execute(unlockTransfer);
+            executor.execute(transfer);
         }
 
         latch.await();// 等待至所有线程都完成

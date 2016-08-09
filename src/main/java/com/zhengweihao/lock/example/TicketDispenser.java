@@ -39,11 +39,11 @@ public class TicketDispenser {
         }
 
         for (int i = 0; i < tickets.size(); i++) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //try {
+            //    Thread.sleep(1);
+            //} catch (InterruptedException e) {
+            //    e.printStackTrace();
+            //}
             System.out.println("\t窗口:" + i + " 的余票量:" + tickets.get(i));
         }
     }
