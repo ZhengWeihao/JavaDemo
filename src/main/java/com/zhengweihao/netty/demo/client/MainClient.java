@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -13,6 +14,8 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
+
+import com.zhengweihao.netty.demo.modal.Message;
 
 public class MainClient {
 
@@ -32,7 +35,9 @@ public class MainClient {
 
 		InetSocketAddress address = new InetSocketAddress("127.0.0.1", 8888);
 		ChannelFuture future = bootstrap.connect(address);
-		System.out.println("result:" + future.isSuccess());
+		
+		Channel channel = future.getChannel();
+		channel.write(new Message("hei hei"));
 		
 		Thread.sleep(2000);
 		bootstrap.shutdown();

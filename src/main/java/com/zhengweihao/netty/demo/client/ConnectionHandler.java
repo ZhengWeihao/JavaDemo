@@ -21,9 +21,6 @@ public class ConnectionHandler extends SimpleChannelHandler {
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 		Message message = (Message) e.getMessage();
 		System.out.println("server said:" + message);
-		
-		e.getChannel().write(new Message("bye bye"));
-		System.out.println("client said bye");
 	}
 
 }
